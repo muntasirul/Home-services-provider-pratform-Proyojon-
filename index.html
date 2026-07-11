@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyojon — Dhaka Home Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Cormorant+Garamond:ital,wght@0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     NAVIGATION (hidden on auth page)
+     ════════════════════════════════════════════ -->
+<nav id="main-nav" style="display:none;">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="font-syne font-black text-2xl text-white tracking-tighter cursor-pointer" onclick="App.goPage('landing')">
+      প্রয়ো<span class="text-orange-500">জ</span>ন
+    </div>
+
+    <div class="hidden md:flex gap-8">
+      <button onclick="App.goPage('landing')"    id="bnav-landing"   class="bnav-item">Home</button>
+      <button onclick="App.goPage('home')"       id="bnav-home"      class="bnav-item">Marketplace</button>
+      <button onclick="App.goPage('story')"      id="bnav-story"     class="bnav-item">Our Story</button>
+      <button onclick="App.goPage('workers')"    id="bnav-workers"   class="bnav-item">Workers</button>
+      <button onclick="App.goPage('bookings')"   id="bnav-bookings"  class="bnav-item">My Orders</button>
+      <button onclick="App.goPage('profile')"    id="bnav-profile"   class="bnav-item">Profile</button>
+      <button id="bnav-provider" onclick="App.goPage('provider')" class="bnav-item hidden">My Jobs</button>
+      <button id="bnav-mod" onclick="App.goPage('mod')" class="bnav-item hidden">Dashboard</button>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <button onclick="Cart.toggle()" class="relative bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition">
+        🛒 Cart
+        <span id="cart-badge">0</span>
+      </button>
+      <button id="logout-btn" onclick="Auth.logout()" style="display:none;" class="flex items-center gap-1 text-gray-400 hover:text-orange-500 transition text-xs font-bold uppercase tracking-wide">
+        <span>⏻</span> Logout
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     AUTH PAGE (full screen, no container)
+     ════════════════════════════════════════════ -->
+<div id="page-auth" class="page min-h-screen flex items-center justify-center px-4 py-12" style="background:#f7f7f5;">
+  <div class="auth-card w-full max-w-md p-10 reveal">
+    <div class="text-center mb-8">
+      <div class="font-syne font-black text-5xl mb-2">প্রয়ো<span class="text-orange-500">জ</span>ন</div>
+      <h2 id="auth-title" class="font-syne text-3xl font-extrabold uppercase mt-4">Welcome Back</h2>
+      <p class="text-gray-400 text-sm mt-2" id="auth-subtitle">Login to access Dhaka's finest services.</p>
+    </div>
+
+    <!-- Role Toggle -->
+    <div class="flex p-1 bg-gray-100 rounded-full mb-8">
+      <button onclick="Auth.setRole('customer')"  id="role-customer"  class="role-btn active">Customer</button>
+      <button onclick="Auth.setRole('provider')"  id="role-provider"  class="role-btn">Provider</button>
+      <button onclick="Auth.setRole('moderator')" id="role-moderator" class="role-btn">Moderator</button>
+    </div>
+
+    <!-- Form -->
+    <form id="auth-form" onsubmit="Auth.handleSubmit(event)" class="space-y-4">
+      <div id="field-name" class="hidden">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Full Name</label>
+        <input type="text" id="auth-name" placeholder="Hasim Zaman" class="auth-input">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Email</label>
+        <input type="email" id="auth-email" required placeholder="name@proyojon.com" class="auth-input">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Password</label>
+        <input type="password" id="auth-password" required placeholder="••••••••" class="auth-input">
+      </div>
+      
+      <!-- Moderator Extra Fields (SignUp Only) -->
+      <div id="field-mod-zone" class="hidden">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Assigned Area / Zone</label>
+        <select id="auth-mod-zone" class="auth-input bg-white">
+          <option value="Gulshan">Gulshan</option>
+          <option value="Banani">Banani</option>
+          <option value="Dhanmondi">Dhanmondi</option>
+          <option value="Bashundhara">Bashundhara</option>
+          <option value="Mirpur">Mirpur</option>
+          <option value="Uttara">Uttara</option>
+        </select>
+      </div>
+
+      <!-- Service Provider Extra Fields (SignUp Only) -->
+      <div id="field-provider-skill" class="hidden">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Primary Trade / Skill</label>
+        <select id="auth-provider-skill" class="auth-input bg-white">
+          <option value="AC Technician">AC Technician</option>
+          <option value="Plumber">Plumber</option>
+          <option value="Electrician">Electrician</option>
+          <option value="Cleaning Expert">Cleaning Expert</option>
+          <option value="Painter">Painter</option>
+          <option value="Moving Specialist">Moving Specialist</option>
+        </select>
+      </div>
+      <div id="field-provider-zones" class="hidden">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Coverage Areas (Hold Ctrl/Cmd to select multiple)</label>
+        <select id="auth-provider-zones" multiple class="auth-input bg-white h-24">
+          <option value="Gulshan" selected>Gulshan</option>
+          <option value="Banani">Banani</option>
+          <option value="Dhanmondi">Dhanmondi</option>
+          <option value="Bashundhara">Bashundhara</option>
+          <option value="Mirpur">Mirpur</option>
+          <option value="Uttara">Uttara</option>
+        </select>
+      </div>
+      <div id="field-provider-doc" class="hidden">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Verification Document (e.g. NID, Trade License)</label>
+        <input type="text" id="auth-provider-doc" placeholder="NID Number or Document name" class="auth-input">
+      </div>
+
+      <div id="field-confirm" class="hidden">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Confirm Password</label>
+        <input type="password" id="auth-confirm" placeholder="••••••••" class="auth-input">
+      </div>
+      <p id="auth-error" class="text-red-500 text-xs font-bold hidden"></p>
+      <button type="submit" id="auth-btn" class="w-full bg-[#0d0e11] text-white py-4 rounded-2xl font-bold uppercase hover:bg-orange-600 transition-all shadow-lg tracking-widest text-sm">
+        Enter Proyojon
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <button onclick="Auth.toggleMode()" id="toggle-mode-btn" class="text-xs font-bold uppercase text-orange-600 hover:underline tracking-widest">
+        Create an account
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN APP WRAPPER (shown after login)
+     ════════════════════════════════════════════ -->
+<div id="app-wrapper" style="display:none;">
+<div class="max-w-7xl mx-auto px-6 py-8">
+
+<!-- ════════════════════════════════════════════
+     LANDING PAGE
+     ════════════════════════════════════════════ -->
+<main id="page-landing" class="page">
+  <!-- Hero -->
+  <div class="text-center py-24 reveal">
+    <h1 class="font-syne font-black leading-none mb-6 uppercase" style="font-size: clamp(3rem, 10vw, 8rem);">
+      প্রয়োজন <br><span class="text-orange-600 font-corm italic" style="font-size: clamp(2.5rem, 9vw, 7rem);">যখন তখন</span>
+    </h1>
+    <p class="text-xl text-gray-500 mb-10 max-w-2xl mx-auto font-light">
+      From heritage plumbing to modern AC mastery. Dhaka's finest artisans, one tap away.
+    </p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <button onclick="App.goPage('home')" class="bg-[#0d0e11] text-white px-10 py-4 rounded-full font-bold hover:bg-orange-600 transition-all shadow-xl text-sm uppercase tracking-widest">
+        Explore Services
+      </button>
+      <button onclick="App.goPage('story')" class="border-2 border-[#0d0e11] px-10 py-4 rounded-full font-bold hover:bg-[#0d0e11] hover:text-white transition-all text-sm uppercase tracking-widest">
+        Our Story
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="bg-white py-20 border-y border-black/5 rounded-3xl my-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
+      <div class="reveal">
+        <h3 class="font-syne text-6xl font-bold text-orange-600">25+</h3>
+        <p class="font-corm italic text-2xl text-gray-400 mt-2">Years of Excellence</p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <h3 class="font-syne text-6xl font-bold text-[#0d0e11]">50k+</h3>
+        <p class="font-corm italic text-2xl text-gray-400 mt-2">Homes Restored</p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <h3 class="font-syne text-6xl font-bold text-[#0d0e11]">100%</h3>
+        <p class="font-corm italic text-2xl text-gray-400 mt-2">Verified Artisans</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Services -->
+  <div class="py-12">
+    <div class="flex justify-between items-end mb-8">
+      <h2 class="font-syne font-extrabold text-4xl uppercase">Popular <span class="text-orange-600">Services</span></h2>
+      <button onclick="App.goPage('home')" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-orange-600 transition border-b border-gray-200 hover:border-orange-600 pb-1">View All →</button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="featured-services"></div>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     MARKETPLACE PAGE
+     ════════════════════════════════════════════ -->
+<main id="page-home" class="page">
+  <!-- Hero Banner -->
+  <div class="hero-bg text-white p-10 md:p-14 mb-12 shadow-2xl">
+    <div class="relative z-10 max-w-2xl">
+      <p class="text-orange-500 text-xs font-bold tracking-widest uppercase mb-3">Professional Dhaka Home Services</p>
+      <h1 class="font-syne font-black leading-tight mb-6 uppercase" style="font-size: clamp(2rem, 5vw, 3.5rem);">
+        Your Home, <span class="text-orange-600 font-corm italic">Fixed.</span><br>Right Now.
+      </h1>
+      <div class="search-box max-w-lg">
+        <span class="px-3 text-xl">🔍</span>
+        <input type="text" id="search-input" placeholder="Search for AC, cleaning, plumbing..." oninput="Services.search(this.value)">
+        <button class="bg-orange-600 text-white px-6 py-3 text-sm font-bold">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zone Filter -->
+  <div class="flex flex-wrap gap-3 mb-10">
+    <button class="zone-pill active" onclick="Services.setZone(this,'All')">📍 All Dhaka</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Gulshan')">Gulshan</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Banani')">Banani</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Dhanmondi')">Dhanmondi</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Bashundhara')">Bashundhara</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Mirpur')">Mirpur</button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+    <aside class="lg:col-span-1">
+      <h2 class="font-syne font-bold text-lg mb-5 uppercase tracking-tight">Categories</h2>
+      <div id="cat-grid" class="flex flex-col gap-2"></div>
+    </aside>
+    <section class="lg:col-span-3">
+      <div id="svc-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+      <p id="no-results" class="hidden text-center text-gray-400 py-20 font-syne uppercase tracking-widest">No services found</p>
+    </section>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     OUR STORY PAGE
+     ════════════════════════════════════════════ -->
+<main id="page-story" class="page">
+  <div class="text-center mb-20 reveal">
+    <h2 class="font-syne font-black uppercase" style="font-size: clamp(3rem, 8vw, 6rem);">
+      Our <span class="text-orange-600">Legacy</span>
+    </h2>
+    <p class="font-corm italic text-2xl text-gray-500 mt-4">Four years of redefining the dignity of labor in Dhaka.</p>
+  </div>
+
+  <!-- Timeline -->
+  <div class="relative max-w-4xl mx-auto mb-24">
+    <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200 hidden md:block"></div>
+    <div id="timeline-items"></div>
+  </div>
+
+  <!-- Reviews -->
+  <div class="py-16 border-t border-black/5">
+    <h2 class="font-syne font-extrabold text-4xl uppercase mb-12 text-center">
+      Voices of the <span class="font-corm italic text-orange-600">Collective</span>
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div>
+        <h5 class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 border-b pb-4 mb-6">Service Recipients</h5>
+        <div id="customer-reviews"></div>
+      </div>
+      <div>
+        <h5 class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 border-b pb-4 mb-6">Service Artisans</h5>
+        <div id="provider-reviews"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     WORKERS PAGE
+     ════════════════════════════════════════════ -->
+<main id="page-workers" class="page">
+  <div class="text-center mb-16 reveal">
+    <h1 class="font-syne font-black text-5xl uppercase tracking-tighter">
+      Our <span class="text-orange-600">Certified</span> Professionals
+    </h1>
+    <p class="text-gray-400 mt-4 max-w-xl mx-auto">Every artisan is background-checked, trained, and rated by real customers.</p>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="flex flex-wrap gap-3 mb-10" id="skill-filter">
+    <button class="zone-pill active" onclick="Workers.filter(this,'All')">All Skills</button>
+  </div>
+
+  <div id="all-workers-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     MY ORDERS / BOOKINGS PAGE
+     ════════════════════════════════════════════ -->
+<main id="page-bookings" class="page max-w-3xl mx-auto">
+  <div class="flex justify-between items-center mb-10">
+    <h1 class="font-syne font-extrabold text-4xl uppercase">My <span class="text-orange-600">Orders</span></h1>
+    <div class="flex gap-2" id="booking-filter-tabs">
+      <button onclick="Bookings.filter('all')"     id="btab-all"      class="zone-pill active text-xs">All</button>
+      <button onclick="Bookings.filter('pending')" id="btab-pending"  class="zone-pill text-xs">Pending</button>
+      <button onclick="Bookings.filter('done')"    id="btab-done"     class="zone-pill text-xs">Completed</button>
+    </div>
+  </div>
+  <div id="bookings-list"></div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     PROFILE PAGE
+     ════════════════════════════════════════════ -->
+<main id="page-profile" class="page max-w-4xl mx-auto">
+  <!-- Header Card -->
+  <div class="bg-[#0d0e11] text-white p-10 rounded-3xl flex items-center gap-8 mb-8">
+    <div id="profile-initial" class="w-24 h-24 bg-orange-600 rounded-full flex items-center justify-center font-syne font-black text-4xl flex-shrink-0">?</div>
+    <div>
+      <h3 id="profile-name" class="font-syne font-bold text-4xl">Guest User</h3>
+      <p id="profile-role-display" class="text-gray-400 text-lg mt-1">Member</p>
+      <p id="profile-email-display" class="text-gray-500 text-sm mt-1"></p>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="grid grid-cols-3 gap-6 mb-8">
+    <div class="stat-card">
+      <p class="text-4xl font-bold text-orange-600" id="stat-bookings">0</p>
+      <p class="uppercase text-[10px] font-bold tracking-widest text-gray-400 mt-2">Total Bookings</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold text-orange-600">4.9</p>
+      <p class="uppercase text-[10px] font-bold tracking-widest text-gray-400 mt-2">Rating</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold text-orange-600" id="stat-spent">৳0</p>
+      <p class="uppercase text-[10px] font-bold tracking-widest text-gray-400 mt-2">Total Spent</p>
+    </div>
+  </div>
+
+  <!-- Edit Profile -->
+  <div class="bg-white rounded-3xl border border-gray-100 p-8">
+    <h3 class="font-syne font-bold text-xl uppercase mb-6">Edit Profile</h3>
+    <form onsubmit="Profile.save(event)" class="space-y-4 max-w-md">
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Display Name</label>
+        <input type="text" id="profile-edit-name" class="auth-input" placeholder="Your name">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Phone</label>
+        <input type="tel" id="profile-edit-phone" class="auth-input" placeholder="+880 1xxx xxx xxx">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Area / Zone</label>
+        <select id="profile-edit-zone" class="auth-input bg-white">
+          <option>Gulshan</option>
+          <option>Banani</option>
+          <option>Dhanmondi</option>
+          <option>Bashundhara</option>
+          <option>Mirpur</option>
+          <option>Uttara</option>
+        </select>
+      </div>
+      <button type="submit" class="bg-[#0d0e11] text-white py-3 px-8 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-orange-600 transition">Save Changes</button>
+    </form>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     MODERATOR DASHBOARD
+     ════════════════════════════════════════════ -->
+<main id="page-mod" class="page">
+  <div class="flex justify-between items-center mb-10">
+    <div>
+      <h1 class="font-syne font-black text-4xl uppercase">Moderator <span class="text-orange-600">Dashboard</span></h1>
+      <p class="text-gray-400 text-sm mt-1">Manage bookings, workers, and services in real time.</p>
+    </div>
+    <div class="text-right">
+      <p id="mod-date" class="text-xs text-gray-400 uppercase tracking-widest"></p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+    <div class="stat-card">
+      <p class="text-4xl font-bold text-orange-600" id="mod-stat-bookings">0</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Total Bookings</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold" id="mod-stat-revenue">৳0</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Revenue</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold" id="mod-stat-users">0</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Registered Users</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold" id="mod-stat-workers">0</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Active Workers</p>
+    </div>
+  </div>
+
+  <!-- All Bookings Table -->
+  <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden mb-10">
+    <div class="p-6 border-b flex justify-between items-center">
+      <h3 class="font-syne font-bold text-xl uppercase">All Bookings</h3>
+      <button onclick="Mod.exportCSV()" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-orange-600 transition border-b border-gray-200 hover:border-orange-600 pb-1">Export CSV ↓</button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full mod-table">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Customer</th>
+            <th>Services</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="mod-bookings-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Workers Management -->
+  <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+    <div class="p-6 border-b flex justify-between items-center">
+      <h3 class="font-syne font-bold text-xl uppercase">Workers</h3>
+      <button onclick="Mod.openAddWorker()" class="bg-[#0d0e11] text-white px-6 py-2 rounded-full text-xs font-bold uppercase hover:bg-orange-600 transition">+ Add Worker</button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full mod-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Skill</th>
+            <th>Area</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="mod-workers-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     SERVICE PROVIDER DASHBOARD
+     ════════════════════════════════════════════ -->
+<main id="page-provider" class="page">
+  <div class="flex justify-between items-center mb-10">
+    <div>
+      <h1 class="font-syne font-black text-4xl uppercase">Worker <span class="text-orange-600">Workspace</span></h1>
+      <p class="text-gray-400 text-sm mt-1">Manage jobs assigned to you and update your status.</p>
+    </div>
+    <div class="text-right">
+      <span id="provider-status-badge" class="status-badge badge-pending">Pending Verification</span>
+    </div>
+  </div>
+
+  <!-- Provider Profile Info -->
+  <div class="bg-white rounded-3xl border border-gray-100 p-8 mb-10">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center gap-6">
+        <div id="provider-avatar" class="w-20 h-20 bg-[#0d0e11] text-white rounded-full flex items-center justify-center font-syne font-black text-3xl">W</div>
+        <div>
+          <h3 id="provider-name" class="font-syne font-bold text-2xl">Worker Name</h3>
+          <p id="provider-skill-display" class="text-orange-600 font-bold text-sm uppercase tracking-widest mt-1">Plumber</p>
+          <p class="text-gray-400 text-xs mt-2">📍 Coverage: <span id="provider-zones-display">Bashundhara</span></p>
+        </div>
+      </div>
+      <div class="flex gap-10">
+        <div class="text-center">
+          <p id="provider-completed-count" class="text-3xl font-bold text-[#0d0e11]">0</p>
+          <p class="uppercase text-[9px] font-bold tracking-widest text-gray-400 mt-1">Jobs Done</p>
+        </div>
+        <div class="text-center">
+          <p id="provider-rating-display" class="text-3xl font-bold text-orange-600">4.5</p>
+          <p class="uppercase text-[9px] font-bold tracking-widest text-gray-400 mt-1">Avg Rating</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assigned Bookings Queue -->
+  <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+    <div class="p-6 border-b">
+      <h3 class="font-syne font-bold text-xl uppercase">My Assigned Bookings</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full mod-table">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Customer Name</th>
+            <th>Services</th>
+            <th>Total Price</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="provider-jobs-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+</div><!-- end container -->
+
+<!-- ════════════════════════════════════════════
+     FOOTER
+     ════════════════════════════════════════════ -->
+<footer class="bg-[#0d0e11] text-white mt-24 py-20 px-6 border-t border-white/5">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-14">
+    <div class="md:col-span-2">
+      <div class="font-syne font-black text-4xl uppercase mb-6">প্রয়ো<span class="text-orange-500">জ</span>ন</div>
+      <p class="text-gray-500 max-w-sm leading-relaxed text-sm">The standard for home maintenance in Dhaka for over two decades. We believe in the dignity of labor and the precision of craft.</p>
+    </div>
+    <div>
+      <h4 class="font-Times New Roman text-xs font-bold uppercase tracking-[0.3em] mb-6 text-orange-500">HQ Contact</h4>
+      <p class="text-sm text-gray-400">House 20, Road 15, Bashundhara R/A<br>Dhaka, 1229</p>
+      <p class="mt-4 font-Times New Roman text-2xl">+880 1533 461 586</p>
+    </div>
+    <div>
+      <h4 class="font-Times New Roman text-xs font-bold uppercase tracking-[0.3em] mb-6 text-orange-500">Support</h4>
+      <ul class="text-sm text-gray-400 space-y-3">
+        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+        <li><a href="#" class="hover:text-white transition">Worker Protection</a></li>
+        <li><a href="#" class="hover:text-white transition">Refund Policy</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+</div><!-- end app-wrapper -->
+
+<!-- ════════════════════════════════════════════
+     CART DRAWER
+     ════════════════════════════════════════════ -->
+<div id="cart-panel" onclick="Cart.handleOverlayClick(event)">
+  <div id="cart-drawer">
+    <div class="flex justify-between items-center mb-8">
+      <h3 class="font-syne font-bold text-3xl uppercase">Cart</h3>
+      <button onclick="Cart.toggle()" class="text-3xl hover:rotate-90 transition-transform leading-none">✕</button>
+    </div>
+    <div id="cart-items" class="space-y-1" style="min-height:100px;"></div>
+    <div class="border-t mt-6 pt-6 flex justify-between font-bold text-2xl">
+      <span>Total</span><span class="text-orange-600" id="cart-total">৳0</span>
+    </div>
+    <button onclick="Cart.checkout()" class="w-full bg-[#0d0e11] text-white py-4 rounded-2xl mt-6 font-bold uppercase hover:bg-orange-600 transition text-sm tracking-widest">
+      Order Confirmed
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BOOKING CONFIRMED OVERLAY (modal, not a page)
+     ════════════════════════════════════════════ -->
+<div id="booking-confirmed-overlay">
+  <div id="booking-confirmed-card">
+    <div class="text-7xl mb-5">✅</div>
+    <h2 class="font-syne font-black text-4xl uppercase mb-3">
+      Booking <span class="text-orange-600">Confirmed!</span>
+    </h2>
+    <p class="text-gray-500 text-sm mb-2" id="confirm-booking-id"></p>
+    <p class="text-gray-400 text-sm mb-8">
+      Our team will contact you within 30 minutes to confirm your appointment time.
+    </p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <button onclick="BookingConfirmed.viewOrders()"
+        class="bg-[#0d0e11] text-white px-8 py-3 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-orange-600 transition">
+        View Orders
+      </button>
+      <button onclick="BookingConfirmed.bookMore()"
+        class="border-2 border-[#0d0e11] px-8 py-3 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-[#0d0e11] hover:text-white transition">
+        Book More
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     ADD WORKER MODAL
+     ════════════════════════════════════════════ -->
+<div id="worker-modal" class="hidden fixed inset-0 z-[600] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
+  <div class="bg-white rounded-3xl p-10 w-full max-w-md shadow-2xl">
+    <h3 class="font-syne font-bold text-2xl uppercase mb-6">Add New Worker</h3>
+    <form onsubmit="Mod.submitWorker(event)" class="space-y-4">
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Full Name</label>
+        <input type="text" id="wm-name" required class="auth-input" placeholder="Worker name">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Skill</label>
+        <input type="text" id="wm-skill" required class="auth-input" placeholder="e.g. Plumber">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Area</label>
+        <select id="wm-area" class="auth-input bg-white">
+          <option>Gulshan</option><option>Banani</option><option>Dhanmondi</option>
+          <option>Bashundhara</option><option>Mirpur</option><option>Uttara</option>
+        </select>
+      </div>
+      <div class="flex gap-4 pt-2">
+        <button type="submit" class="flex-1 bg-[#0d0e11] text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-orange-600 transition">Add Worker</button>
+        <button type="button" onclick="Mod.closeWorkerModal()" class="flex-1 border border-gray-200 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-gray-50 transition">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════════
+     AI ASSISTANT CHATBOX
+     ════════════════════════════════════════════ -->
+<button id="ai-chat-btn" onclick="AIChat.toggle()" title="AI Assistant">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+  </svg>
+</button>
+
+<div id="ai-chat-box">
+  <!-- Chat Header -->
+  <div class="ai-header">
+    <div class="ai-header-info">
+      <div class="ai-status-dot"></div>
+      <div>
+        <h4 class="font-syne font-bold text-sm tracking-tight">Proyojon AI</h4>
+        <p class="text-[10px] text-gray-400">Online assistant</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="AIChat.openSettings()" class="text-gray-400 hover:text-white transition leading-none" title="AI Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
+      <button onclick="AIChat.toggle()" class="text-gray-400 hover:text-white transition leading-none font-bold text-sm" title="Minimize">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Screen overlay inside chatbox -->
+  <div id="ai-settings-screen">
+    <div class="bg-[#0d0e11] text-white p-5 flex justify-between items-center border-b border-white/5">
+      <h4 class="font-syne font-bold text-sm uppercase tracking-wider">AI Configuration</h4>
+      <button onclick="AIChat.closeSettings()" class="text-gray-400 hover:text-white transition">✕</button>
+    </div>
+    <div class="p-6 flex-1 flex flex-col gap-4 overflow-y-auto">
+      <div>
+        <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1.5">AI API Provider</label>
+        <select id="ai-provider" class="auth-input bg-white py-2" onchange="AIChat.onProviderChange(this.value)">
+          <option value="gemini">Google Gemini</option>
+          <option value="groq">Groq Cloud</option>
+          <option value="openai">OpenAI</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1.5">API Model</label>
+        <input type="text" id="ai-model" class="auth-input py-2" placeholder="e.g. gemini-1.5-flash">
+      </div>
+      <div>
+        <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1.5">API Key</label>
+        <input type="password" id="ai-key" class="auth-input py-2" placeholder="Paste your API key here">
+      </div>
+      <div class="mt-auto pt-4 flex gap-3">
+        <button onclick="AIChat.saveSettings()" class="flex-1 bg-[#0d0e11] text-white py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-orange-600 transition">Save Settings</button>
+        <button onclick="AIChat.closeSettings()" class="flex-1 border border-gray-200 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-gray-50 transition">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Messages list -->
+  <div id="ai-messages" class="ai-messages">
+    <!-- Initial Greetings will go here -->
+  </div>
+
+  <!-- Chat Input -->
+  <form onsubmit="AIChat.submitMessage(event)" class="ai-input-area">
+    <input type="text" id="ai-input" required class="ai-input-field" placeholder="Ask about services, booking..." autocomplete="off">
+    <button type="submit" class="ai-send-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+      </svg>
+    </button>
+  </form>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>

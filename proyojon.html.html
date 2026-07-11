@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyojon — Dhaka Home Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Cormorant+Garamond:ital,wght@0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --dark: #0d0e11;
+    --orange: #e8390e;
+    --gray-light: #f9fafb;
+    --transition: all 0.35s cubic-bezier(0.2, 1, 0.3, 1);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f7f7f5;
+    color: #1a1a1a;
+    overflow-x: hidden;
+  }
+
+  .font-syne    { font-family: 'Syne', sans-serif; }
+  .font-corm    { font-family: 'Cormorant Garamond', serif; }
+  .bg-dark      { background-color: var(--dark); }
+  .text-orange  { color: var(--orange); }
+
+  /* ── PAGE SYSTEM ─────────────────────────────── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── NAV ─────────────────────────────────────── */
+  #main-nav {
+    position: sticky; top: 0; z-index: 200;
+    background: var(--dark);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .bnav-item {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 6px 0;
+    position: relative;
+    transition: var(--transition);
+    background: transparent;
+    border: none;
+  }
+  .bnav-item:hover { color: #fff; }
+  .bnav-item.active {
+    color: var(--orange);
+  }
+  .bnav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0;
+    width: 100%; height: 2px;
+    background: var(--orange);
+    border-radius: 2px;
+  }
+
+  /* ── REVEAL ANIMATION ────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ── AUTH PAGE ───────────────────────────────── */
+  .auth-card {
+    background: #fff;
+    border-radius: 2.5rem;
+    box-shadow: 0 30px 80px -10px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+  }
+
+  .auth-input {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    border-radius: 0.9rem;
+    border: 1.5px solid #e5e7eb;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: var(--transition);
+    background: #fafafa;
+  }
+  .auth-input:focus {
+    border-color: var(--orange);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(232,57,14,0.08);
+  }
+
+  .role-btn {
+    flex: 1; padding: 0.55rem; border-radius: 50px;
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    cursor: pointer; transition: var(--transition);
+    border: none; background: transparent; color: #9ca3af;
+  }
+  .role-btn.active { background: var(--dark); color: #fff; }
+
+  /* ── HERO ────────────────────────────────────── */
+  .hero-bg {
+    background: var(--dark);
+    border-radius: 2.5rem;
+    overflow: hidden;
+    position: relative;
+  }
+  .hero-bg::before {
+    content: 'PRJ';
+    position: absolute; right: -20px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(120px, 20vw, 260px);
+    font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .search-box {
+    background: #fff;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .search-box input::placeholder {
+  color: #888;
+}
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 1rem 1.2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #000; /* 👈 add this */
+}
+
+  /* ── ZONE PILLS ──────────────────────────────── */
+  .zone-pill {
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    padding: 0.55rem 1.4rem;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .zone-pill:hover { border-color: var(--orange); }
+  .zone-pill.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+  /* ── CATEGORY CARDS ──────────────────────────── */
+  .cat-card {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    border: 1.5px solid #f0f0ee;
+    transition: var(--transition);
+    cursor: pointer;
+    user-select: none;
+  }
+  .cat-card:hover  { border-color: var(--orange); transform: translateX(4px); }
+  .cat-card.active { border-color: var(--orange); background: #fff7f5; }
+
+  /* ── SERVICE CARDS ───────────────────────────── */
+  .svc-card {
+    background: #fff;
+    border-radius: 1.75rem;
+    padding: 1.75rem;
+    border: 1.5px solid #f0f0ee;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .svc-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.09);
+    border-color: #e0e0dc;
+  }
+  .add-btn {
+    background: var(--dark);
+    color: #fff;
+    border: none;
+    padding: 0.55rem 1.4rem;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .add-btn:hover { background: var(--orange); }
+
+  /* ── WORKER CARDS ────────────────────────────── */
+  .worker-card {
+    background: #fff;
+    border-radius: 1.75rem;
+    padding: 1.75rem;
+    border: 1.5px solid #f0f0ee;
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center; gap: 1rem;
+    transition: var(--transition);
+    cursor: pointer;
+  }
+  .worker-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.09);
+    border-color: var(--orange);
+  }
+  .worker-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    transition: var(--transition);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  .worker-card:hover .worker-avatar { transform: scale(1.08); }
+
+  /* ── REVIEW CARDS ────────────────────────────── */
+  .review-card {
+    background: #fff;
+    border-radius: 2rem;
+    padding: 2rem 2.5rem;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-bottom: 1.25rem;
+  }
+  .review-card:hover { transform: scale(1.025) translateY(-4px); }
+  .review-card.dark {
+    background: var(--dark); color: #fff; border: none;
+  }
+
+  /* ── CART PANEL ──────────────────────────────── */
+  #cart-panel {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    display: none;
+  }
+  #cart-panel.open { display: block; }
+  #cart-drawer {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: min(420px, 100%);
+    background: #fff;
+    padding: 2.5rem;
+    overflow-y: auto;
+    animation: slideIn 0.35s cubic-bezier(0.2, 1, 0.3, 1);
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+
+  /* ── CART BADGE ──────────────────────────────── */
+  #cart-badge {
+    position: absolute; top: -6px; right: -6px;
+    background: #facc15;
+    color: var(--dark);
+    border-radius: 50%;
+    width: 20px; height: 20px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    display: none;
+  }
+
+  /* ── BOOKING CONFIRMED OVERLAY ───────────────── */
+  #booking-confirmed-overlay {
+    position: fixed; inset: 0; z-index: 600;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  #booking-confirmed-overlay.open {
+    display: flex;
+  }
+  #booking-confirmed-card {
+    background: #fff;
+    border-radius: 2.5rem;
+    padding: 3.5rem 3rem;
+    text-align: center;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+    animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+
+  /* ── TOAST ───────────────────────────────────── */
+  #toast {
+    position: fixed; bottom: 2.5rem; right: 2.5rem;
+    z-index: 1000;
+    background: var(--dark);
+    color: #fff;
+    padding: 0.9rem 1.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── PROFILE STATS ───────────────────────────── */
+  .stat-card {
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+    border: 1.5px solid #f0f0ee;
+  }
+
+  /* ── BOOKING HISTORY ─────────────────────────── */
+  .booking-row {
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    border: 1.5px solid #f0f0ee;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+  }
+  .booking-row:hover { border-color: var(--orange); }
+
+  /* ── TIMELINE ────────────────────────────────── */
+  .timeline-dot {
+    width: 3rem; height: 3rem;
+    background: var(--dark);
+    border-radius: 50%;
+    border: 4px solid #f7f7f5;
+    box-shadow: 0 0 0 2px #e5e7eb;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    z-index: 2;
+  }
+
+  /* ── MODERATOR PANEL ─────────────────────────── */
+  .mod-table th {
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: #9ca3af;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1.5px solid #f0f0ee;
+  }
+  .mod-table td {
+    padding: 1rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f7f7f5;
+    vertical-align: middle;
+  }
+  .mod-table tr:hover td { background: #fafafa; }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .badge-pending  { background: #fef9c3; color: #854d0e; }
+  .badge-done     { background: #dcfce7; color: #166534; }
+  .badge-active   { background: #dbeafe; color: #1e40af; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #f0f0ee; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     NAVIGATION (hidden on auth page)
+════════════════════════════════════════════ -->
+<nav id="main-nav" style="display:none;">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="font-syne font-black text-2xl text-white tracking-tighter cursor-pointer" onclick="App.goPage('landing')">
+      প্রয়ো<span class="text-orange-500">জ</span>ন
+    </div>
+
+    <div class="hidden md:flex gap-8">
+      <button onclick="App.goPage('landing')"    id="bnav-landing"   class="bnav-item">Home</button>
+      <button onclick="App.goPage('home')"       id="bnav-home"      class="bnav-item">Marketplace</button>
+      <button onclick="App.goPage('story')"      id="bnav-story"     class="bnav-item">Our Story</button>
+      <button onclick="App.goPage('workers')"    id="bnav-workers"   class="bnav-item">Workers</button>
+      <button onclick="App.goPage('bookings')"   id="bnav-bookings"  class="bnav-item">My Orders</button>
+      <button onclick="App.goPage('profile')"    id="bnav-profile"   class="bnav-item">Profile</button>
+      <button id="bnav-mod" onclick="App.goPage('mod')" class="bnav-item hidden">Dashboard</button>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <button onclick="Cart.toggle()" class="relative bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition">
+        🛒 Cart
+        <span id="cart-badge">0</span>
+      </button>
+      <button id="logout-btn" onclick="Auth.logout()" style="display:none;" class="flex items-center gap-1 text-gray-400 hover:text-orange-500 transition text-xs font-bold uppercase tracking-wide">
+        <span>⏻</span> Logout
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     AUTH PAGE (full screen, no container)
+════════════════════════════════════════════ -->
+<div id="page-auth" class="page min-h-screen flex items-center justify-center px-4 py-12" style="background:#f7f7f5;">
+  <div class="auth-card w-full max-w-md p-10 reveal">
+    <div class="text-center mb-8">
+      <div class="font-syne font-black text-5xl mb-2">প্রয়ো<span class="text-orange-500">জ</span>ন</div>
+      <h2 id="auth-title" class="font-syne text-3xl font-extrabold uppercase mt-4">Welcome Back</h2>
+      <p class="text-gray-400 text-sm mt-2" id="auth-subtitle">Login to access Dhaka's finest services.</p>
+    </div>
+
+    <!-- Role Toggle -->
+    <div class="flex p-1 bg-gray-100 rounded-full mb-8">
+      <button onclick="Auth.setRole('customer')"  id="role-customer"  class="role-btn active">Customer</button>
+      <button onclick="Auth.setRole('moderator')" id="role-moderator" class="role-btn">Moderator</button>
+    </div>
+
+    <!-- Form -->
+    <form id="auth-form" onsubmit="Auth.handleSubmit(event)" class="space-y-4">
+      <div id="field-name" class="hidden">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Full Name</label>
+        <input type="text" id="auth-name" placeholder="Hasim Zaman" class="auth-input">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Email</label>
+        <input type="email" id="auth-email" required placeholder="name@proyojon.com" class="auth-input">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Password</label>
+        <input type="password" id="auth-password" required placeholder="••••••••" class="auth-input">
+      </div>
+      <div id="field-confirm" class="hidden">
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Confirm Password</label>
+        <input type="password" id="auth-confirm" placeholder="••••••••" class="auth-input">
+      </div>
+      <p id="auth-error" class="text-red-500 text-xs font-bold hidden"></p>
+      <button type="submit" id="auth-btn" class="w-full bg-[#0d0e11] text-white py-4 rounded-2xl font-bold uppercase hover:bg-orange-600 transition-all shadow-lg tracking-widest text-sm">
+        Enter Proyojon
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <button onclick="Auth.toggleMode()" id="toggle-mode-btn" class="text-xs font-bold uppercase text-orange-600 hover:underline tracking-widest">
+        Create an account
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN APP WRAPPER (shown after login)
+════════════════════════════════════════════ -->
+<div id="app-wrapper" style="display:none;">
+<div class="max-w-7xl mx-auto px-6 py-8">
+
+<!-- ════════════════════════════════════════════
+     LANDING PAGE
+════════════════════════════════════════════ -->
+<main id="page-landing" class="page">
+  <!-- Hero -->
+  <div class="text-center py-24 reveal">
+    <h1 class="font-syne font-black leading-none mb-6 uppercase" style="font-size: clamp(3rem, 10vw, 8rem);">
+      প্রয়োজন <br><span class="text-orange-600 font-corm italic" style="font-size: clamp(2.5rem, 9vw, 7rem);">যখন তখন</span>
+    </h1>
+    <p class="text-xl text-gray-500 mb-10 max-w-2xl mx-auto font-light">
+      From heritage plumbing to modern AC mastery. Dhaka's finest artisans, one tap away.
+    </p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <button onclick="App.goPage('home')" class="bg-[#0d0e11] text-white px-10 py-4 rounded-full font-bold hover:bg-orange-600 transition-all shadow-xl text-sm uppercase tracking-widest">
+        Explore Services
+      </button>
+      <button onclick="App.goPage('story')" class="border-2 border-[#0d0e11] px-10 py-4 rounded-full font-bold hover:bg-[#0d0e11] hover:text-white transition-all text-sm uppercase tracking-widest">
+        Our Story
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="bg-white py-20 border-y border-black/5 rounded-3xl my-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
+      <div class="reveal">
+        <h3 class="font-syne text-6xl font-bold text-orange-600">25+</h3>
+        <p class="font-corm italic text-2xl text-gray-400 mt-2">Years of Excellence</p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <h3 class="font-syne text-6xl font-bold text-[#0d0e11]">50k+</h3>
+        <p class="font-corm italic text-2xl text-gray-400 mt-2">Homes Restored</p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <h3 class="font-syne text-6xl font-bold text-[#0d0e11]">100%</h3>
+        <p class="font-corm italic text-2xl text-gray-400 mt-2">Verified Artisans</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Services -->
+  <div class="py-12">
+    <div class="flex justify-between items-end mb-8">
+      <h2 class="font-syne font-extrabold text-4xl uppercase">Popular <span class="text-orange-600">Services</span></h2>
+      <button onclick="App.goPage('home')" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-orange-600 transition border-b border-gray-200 hover:border-orange-600 pb-1">View All →</button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="featured-services"></div>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     MARKETPLACE PAGE
+════════════════════════════════════════════ -->
+<main id="page-home" class="page">
+  <!-- Hero Banner -->
+  <div class="hero-bg text-white p-10 md:p-14 mb-12 shadow-2xl">
+    <div class="relative z-10 max-w-2xl">
+      <p class="text-orange-500 text-xs font-bold tracking-widest uppercase mb-3">Professional Dhaka Home Services</p>
+      <h1 class="font-syne font-black leading-tight mb-6 uppercase" style="font-size: clamp(2rem, 5vw, 3.5rem);">
+        Your Home, <span class="text-orange-600 font-corm italic">Fixed.</span><br>Right Now.
+      </h1>
+      <div class="search-box max-w-lg">
+        <span class="px-3 text-xl">🔍</span>
+        <input type="text" id="search-input" placeholder="Search for AC, cleaning, plumbing..." oninput="Services.search(this.value)">
+        <button class="bg-orange-600 text-white px-6 py-3 text-sm font-bold">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zone Filter -->
+  <div class="flex flex-wrap gap-3 mb-10">
+    <button class="zone-pill active" onclick="Services.setZone(this,'All')">📍 All Dhaka</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Gulshan')">Gulshan</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Banani')">Banani</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Dhanmondi')">Dhanmondi</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Bashundhara')">Bashundhara</button>
+    <button class="zone-pill" onclick="Services.setZone(this,'Mirpur')">Mirpur</button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+    <aside class="lg:col-span-1">
+      <h2 class="font-syne font-bold text-lg mb-5 uppercase tracking-tight">Categories</h2>
+      <div id="cat-grid" class="flex flex-col gap-2"></div>
+    </aside>
+    <section class="lg:col-span-3">
+      <div id="svc-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+      <p id="no-results" class="hidden text-center text-gray-400 py-20 font-syne uppercase tracking-widest">No services found</p>
+    </section>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     OUR STORY PAGE
+════════════════════════════════════════════ -->
+<main id="page-story" class="page">
+  <div class="text-center mb-20 reveal">
+    <h2 class="font-syne font-black uppercase" style="font-size: clamp(3rem, 8vw, 6rem);">
+      Our <span class="text-orange-600">Legacy</span>
+    </h2>
+    <p class="font-corm italic text-2xl text-gray-500 mt-4">Four years of redefining the dignity of labor in Dhaka.</p>
+  </div>
+
+  <!-- Timeline -->
+  <div class="relative max-w-4xl mx-auto mb-24">
+    <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200 hidden md:block"></div>
+    <div id="timeline-items"></div>
+  </div>
+
+  <!-- Reviews -->
+  <div class="py-16 border-t border-black/5">
+    <h2 class="font-syne font-extrabold text-4xl uppercase mb-12 text-center">
+      Voices of the <span class="font-corm italic text-orange-600">Collective</span>
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div>
+        <h5 class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 border-b pb-4 mb-6">Service Recipients</h5>
+        <div id="customer-reviews"></div>
+      </div>
+      <div>
+        <h5 class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 border-b pb-4 mb-6">Service Artisans</h5>
+        <div id="provider-reviews"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     WORKERS PAGE
+════════════════════════════════════════════ -->
+<main id="page-workers" class="page">
+  <div class="text-center mb-16 reveal">
+    <h1 class="font-syne font-black text-5xl uppercase tracking-tighter">
+      Our <span class="text-orange-600">Certified</span> Professionals
+    </h1>
+    <p class="text-gray-400 mt-4 max-w-xl mx-auto">Every artisan is background-checked, trained, and rated by real customers.</p>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="flex flex-wrap gap-3 mb-10" id="skill-filter">
+    <button class="zone-pill active" onclick="Workers.filter(this,'All')">All Skills</button>
+  </div>
+
+  <div id="all-workers-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     MY ORDERS / BOOKINGS PAGE
+════════════════════════════════════════════ -->
+<main id="page-bookings" class="page max-w-3xl mx-auto">
+  <div class="flex justify-between items-center mb-10">
+    <h1 class="font-syne font-extrabold text-4xl uppercase">My <span class="text-orange-600">Orders</span></h1>
+    <div class="flex gap-2" id="booking-filter-tabs">
+      <button onclick="Bookings.filter('all')"     id="btab-all"      class="zone-pill active text-xs">All</button>
+      <button onclick="Bookings.filter('pending')" id="btab-pending"  class="zone-pill text-xs">Pending</button>
+      <button onclick="Bookings.filter('done')"    id="btab-done"     class="zone-pill text-xs">Completed</button>
+    </div>
+  </div>
+  <div id="bookings-list"></div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     PROFILE PAGE
+════════════════════════════════════════════ -->
+<main id="page-profile" class="page max-w-4xl mx-auto">
+  <!-- Header Card -->
+  <div class="bg-[#0d0e11] text-white p-10 rounded-3xl flex items-center gap-8 mb-8">
+    <div id="profile-initial" class="w-24 h-24 bg-orange-600 rounded-full flex items-center justify-center font-syne font-black text-4xl flex-shrink-0">?</div>
+    <div>
+      <h3 id="profile-name" class="font-syne font-bold text-4xl">Guest User</h3>
+      <p id="profile-role-display" class="text-gray-400 text-lg mt-1">Member</p>
+      <p id="profile-email-display" class="text-gray-500 text-sm mt-1"></p>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="grid grid-cols-3 gap-6 mb-8">
+    <div class="stat-card">
+      <p class="text-4xl font-bold text-orange-600" id="stat-bookings">0</p>
+      <p class="uppercase text-[10px] font-bold tracking-widest text-gray-400 mt-2">Total Bookings</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold text-orange-600">4.9</p>
+      <p class="uppercase text-[10px] font-bold tracking-widest text-gray-400 mt-2">Rating</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold text-orange-600" id="stat-spent">৳0</p>
+      <p class="uppercase text-[10px] font-bold tracking-widest text-gray-400 mt-2">Total Spent</p>
+    </div>
+  </div>
+
+  <!-- Edit Profile -->
+  <div class="bg-white rounded-3xl border border-gray-100 p-8">
+    <h3 class="font-syne font-bold text-xl uppercase mb-6">Edit Profile</h3>
+    <form onsubmit="Profile.save(event)" class="space-y-4 max-w-md">
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Display Name</label>
+        <input type="text" id="profile-edit-name" class="auth-input" placeholder="Your name">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Phone</label>
+        <input type="tel" id="profile-edit-phone" class="auth-input" placeholder="+880 1xxx xxx xxx">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Area / Zone</label>
+        <select id="profile-edit-zone" class="auth-input bg-white">
+          <option>Gulshan</option>
+          <option>Banani</option>
+          <option>Dhanmondi</option>
+          <option>Bashundhara</option>
+          <option>Mirpur</option>
+          <option>Uttara</option>
+        </select>
+      </div>
+      <button type="submit" class="bg-[#0d0e11] text-white py-3 px-8 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-orange-600 transition">Save Changes</button>
+    </form>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════
+     MODERATOR DASHBOARD
+════════════════════════════════════════════ -->
+<main id="page-mod" class="page">
+  <div class="flex justify-between items-center mb-10">
+    <div>
+      <h1 class="font-syne font-black text-4xl uppercase">Moderator <span class="text-orange-600">Dashboard</span></h1>
+      <p class="text-gray-400 text-sm mt-1">Manage bookings, workers, and services in real time.</p>
+    </div>
+    <div class="text-right">
+      <p id="mod-date" class="text-xs text-gray-400 uppercase tracking-widest"></p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+    <div class="stat-card">
+      <p class="text-4xl font-bold text-orange-600" id="mod-stat-bookings">0</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Total Bookings</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold" id="mod-stat-revenue">৳0</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Revenue</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold" id="mod-stat-users">0</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Registered Users</p>
+    </div>
+    <div class="stat-card">
+      <p class="text-4xl font-bold" id="mod-stat-workers">0</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Active Workers</p>
+    </div>
+  </div>
+
+  <!-- All Bookings Table -->
+  <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden mb-10">
+    <div class="p-6 border-b flex justify-between items-center">
+      <h3 class="font-syne font-bold text-xl uppercase">All Bookings</h3>
+      <button onclick="Mod.exportCSV()" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-orange-600 transition border-b border-gray-200 hover:border-orange-600 pb-1">Export CSV ↓</button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full mod-table">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Customer</th>
+            <th>Services</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="mod-bookings-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Workers Management -->
+  <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+    <div class="p-6 border-b flex justify-between items-center">
+      <h3 class="font-syne font-bold text-xl uppercase">Workers</h3>
+      <button onclick="Mod.openAddWorker()" class="bg-[#0d0e11] text-white px-6 py-2 rounded-full text-xs font-bold uppercase hover:bg-orange-600 transition">+ Add Worker</button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full mod-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Skill</th>
+            <th>Area</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="mod-workers-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+</div><!-- end container -->
+
+<!-- ════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer class="bg-[#0d0e11] text-white mt-24 py-20 px-6 border-t border-white/5">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-14">
+    <div class="md:col-span-2">
+      <div class="font-syne font-black text-4xl uppercase mb-6">প্রয়ো<span class="text-orange-500">জ</span>ন</div>
+      <p class="text-gray-500 max-w-sm leading-relaxed text-sm">The standard for home maintenance in Dhaka for over two decades. We believe in the dignity of labor and the precision of craft.</p>
+    </div>
+    <div>
+      <h4 class="font-Times New Roman text-xs font-bold uppercase tracking-[0.3em] mb-6 text-orange-500">HQ Contact</h4>
+      <p class="text-sm text-gray-400">House 20, Road 15, Bashundhara R/A<br>Dhaka, 1229</p>
+      <p class="mt-4 font-Times New Roman text-2xl">+880 1533 461 586</p>
+    </div>
+    <div>
+      <h4 class="font-Times New Roman text-xs font-bold uppercase tracking-[0.3em] mb-6 text-orange-500">Support</h4>
+      <ul class="text-sm text-gray-400 space-y-3">
+        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+        <li><a href="#" class="hover:text-white transition">Worker Protection</a></li>
+        <li><a href="#" class="hover:text-white transition">Refund Policy</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+</div><!-- end app-wrapper -->
+
+<!-- ════════════════════════════════════════════
+     CART DRAWER
+════════════════════════════════════════════ -->
+<div id="cart-panel" onclick="Cart.handleOverlayClick(event)">
+  <div id="cart-drawer">
+    <div class="flex justify-between items-center mb-8">
+      <h3 class="font-syne font-bold text-3xl uppercase">Cart</h3>
+      <button onclick="Cart.toggle()" class="text-3xl hover:rotate-90 transition-transform leading-none">✕</button>
+    </div>
+    <div id="cart-items" class="space-y-1" style="min-height:100px;"></div>
+    <div class="border-t mt-6 pt-6 flex justify-between font-bold text-2xl">
+      <span>Total</span><span class="text-orange-600" id="cart-total">৳0</span>
+    </div>
+    <button onclick="Cart.checkout()" class="w-full bg-[#0d0e11] text-white py-4 rounded-2xl mt-6 font-bold uppercase hover:bg-orange-600 transition text-sm tracking-widest">
+      Order Confirmed
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     BOOKING CONFIRMED OVERLAY (modal, not a page)
+════════════════════════════════════════════ -->
+<div id="booking-confirmed-overlay">
+  <div id="booking-confirmed-card">
+    <div class="text-7xl mb-5">✅</div>
+    <h2 class="font-syne font-black text-4xl uppercase mb-3">
+      Booking <span class="text-orange-600">Confirmed!</span>
+    </h2>
+    <p class="text-gray-500 text-sm mb-2" id="confirm-booking-id"></p>
+    <p class="text-gray-400 text-sm mb-8">
+      Our team will contact you within 30 minutes to confirm your appointment time.
+    </p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <button onclick="BookingConfirmed.viewOrders()"
+        class="bg-[#0d0e11] text-white px-8 py-3 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-orange-600 transition">
+        View Orders
+      </button>
+      <button onclick="BookingConfirmed.bookMore()"
+        class="border-2 border-[#0d0e11] px-8 py-3 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-[#0d0e11] hover:text-white transition">
+        Book More
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     ADD WORKER MODAL
+════════════════════════════════════════════ -->
+<div id="worker-modal" class="hidden fixed inset-0 z-[600] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
+  <div class="bg-white rounded-3xl p-10 w-full max-w-md shadow-2xl">
+    <h3 class="font-syne font-bold text-2xl uppercase mb-6">Add New Worker</h3>
+    <form onsubmit="Mod.submitWorker(event)" class="space-y-4">
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Full Name</label>
+        <input type="text" id="wm-name" required class="auth-input" placeholder="Worker name">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Skill</label>
+        <input type="text" id="wm-skill" required class="auth-input" placeholder="e.g. Plumber">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Area</label>
+        <select id="wm-area" class="auth-input bg-white">
+          <option>Gulshan</option><option>Banani</option><option>Dhanmondi</option>
+          <option>Bashundhara</option><option>Mirpur</option><option>Uttara</option>
+        </select>
+      </div>
+      <div class="flex gap-4 pt-2">
+        <button type="submit" class="flex-1 bg-[#0d0e11] text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-orange-600 transition">Add Worker</button>
+        <button type="button" onclick="Mod.closeWorkerModal()" class="flex-1 border border-gray-200 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-gray-50 transition">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+"use strict";
+
+// ─── DATABASE ──────────────────────────────────────────────────────────────────
+
+const DB = {
+  _key: (k) => `proyojon_${k}`,
+
+  get(key) {
+    try { return JSON.parse(localStorage.getItem(this._key(key))); }
+    catch { return null; }
+  },
+
+  set(key, value) {
+    localStorage.setItem(this._key(key), JSON.stringify(value));
+    return value;
+  },
+
+  remove(key) {
+    localStorage.removeItem(this._key(key));
+  },
+
+  getUsers()           { return this.get('users') || []; },
+  saveUsers(u)         { return this.set('users', u); },
+  findUser(email)      { return this.getUsers().find(u => u.email === email); },
+  addUser(user)        {
+    const users = this.getUsers();
+    users.push(user);
+    return this.saveUsers(users);
+  },
+
+  getSession()         { return this.get('session'); },
+  setSession(user)     { return this.set('session', user); },
+  clearSession()       { this.remove('session'); },
+
+  // Persist last active page (not auth)
+  getLastPage()        { return this.get('lastPage') || 'landing'; },
+  setLastPage(page)    { return this.set('lastPage', page); },
+
+  getBookings()        { return this.get('bookings') || []; },
+  saveBookings(b)      { return this.set('bookings', b); },
+  addBooking(booking)  {
+    const bookings = this.getBookings();
+    bookings.push(booking);
+    return this.saveBookings(bookings);
+  },
+
+  getWorkers()         { return this.get('workers') || SEED_WORKERS; },
+  saveWorkers(w)       { return this.set('workers', w); },
+  addWorker(worker)    {
+    const workers = this.getWorkers();
+    workers.push(worker);
+    return this.saveWorkers(workers);
+  },
+  removeWorker(id)     {
+    const workers = this.getWorkers().filter(w => w.id !== id);
+    return this.saveWorkers(workers);
+  },
+};
+
+// ─── SEED DATA ─────────────────────────────────────────────────────────────────
+
+const SERVICES = [
+  { id:1,  name:'AC Installation & Service', price:800,  cat:'ac',        icon:'❄️',  rating:4.9, desc:'Full AC servicing, gas refilling, installation & repair.' },
+  { id:2,  name:'Deep Home Cleaning',        price:1200, cat:'clean',      icon:'🧹', rating:4.8, desc:'Top-to-bottom professional home deep clean.' },
+  { id:3,  name:'Plumbing Repair',           price:500,  cat:'plumb',      icon:'🔧', rating:4.7, desc:'Leak fixes, pipe fitting, drainage unclogging.' },
+  { id:4,  name:'Electrical Wiring',         price:600,  cat:'elect',      icon:'⚡', rating:4.8, desc:'Safe wiring, socket installation, load upgrades.' },
+  { id:5,  name:'Wall Painting',             price:3500, cat:'paint',      icon:'🎨', rating:4.9, desc:'Interior & exterior painting, premium finishes.' },
+  { id:6,  name:'Pest Control',              price:900,  cat:'pest',       icon:'🐛', rating:4.6, desc:'Chemical-free & conventional pest elimination.' },
+  { id:7,  name:'Water Tank Cleaning',       price:700,  cat:'water',      icon:'💧', rating:4.7, desc:'Rooftop & underground tank hygiene service.' },
+  { id:8,  name:'Fridge & Appliance Repair', price:1000, cat:'appliance',  icon:'🛠️', rating:4.7, desc:'All brands, fridge, washing machine, oven.' },
+  { id:9,  name:'Wood Furniture Fix',        price:1500, cat:'carpentry',  icon:'🪚', rating:4.8, desc:'Repair, polish & custom carpentry work.' },
+  { id:10, name:'Laundry Service',           price:400,  cat:'laundry',    icon:'👕', rating:4.5, desc:'Wash, dry & fold same-day laundry service.' },
+  { id:11, name:'House Shifting',            price:3000, cat:'moving',     icon:'🚚', rating:4.6, desc:'Full packing, moving & unpacking service.' },
+  { id:12, name:'CCTV Installation',         price:2500, cat:'security',   icon:'🔒', rating:4.8, desc:'HD camera setup, NVR configuration & testing.' },
+  { id:13, name:'WiFi & IT Setup',           price:800,  cat:'it',         icon:'💻', rating:4.7, desc:'Router config, networking, smart home setup.' },
+];
+
+const CATEGORIES = [
+  { id:'all',       name:'All Categories',  icon:'🏠' },
+  { id:'ac',        name:'AC Services',     icon:'❄️' },
+  { id:'clean',     name:'Cleaning',        icon:'🧹' },
+  { id:'plumb',     name:'Plumbing',        icon:'🔧' },
+  { id:'elect',     name:'Electrical',      icon:'⚡' },
+  { id:'paint',     name:'Painting',        icon:'🎨' },
+  { id:'pest',      name:'Pest Control',    icon:'🐛' },
+  { id:'water',     name:'Water Services',  icon:'💧' },
+  { id:'appliance', name:'Appliance Repair',icon:'🛠️' },
+  { id:'carpentry', name:'Carpentry',       icon:'🪚' },
+  { id:'laundry',   name:'Laundry',         icon:'👕' },
+  { id:'moving',    name:'Moving',          icon:'🚚' },
+  { id:'security',  name:'Security',        icon:'🔒' },
+  { id:'it',        name:'IT Services',     icon:'💻' },
+];
+
+const COLORS = ['bg-red-500','bg-teal-500','bg-yellow-500','bg-indigo-500','bg-purple-500','bg-pink-500','bg-green-600','bg-blue-600'];
+
+const SEED_WORKERS = [
+  { id:'w1', name:'Karim Hossain', skill:'AC Technician',  area:'Bashundhara', color:'bg-red-500',    initials:'KH', status:'active' },
+  { id:'w2', name:'Rahim Mia',     skill:'Plumber',         area:'Banani',      color:'bg-teal-500',   initials:'RM', status:'active' },
+  { id:'w3', name:'Nayan Das',     skill:'Electrician',     area:'Dhanmondi',   color:'bg-yellow-500', initials:'ND', status:'active' },
+  { id:'w4', name:'Sumi Akter',    skill:'Cleaning Expert', area:'Gulshan',     color:'bg-pink-500',   initials:'SA', status:'active' },
+  { id:'w5', name:'Niloy Barua',   skill:'Painter',         area:'Mirpur',      color:'bg-indigo-500', initials:'NB', status:'active' },
+  { id:'w6', name:'Navid Hasan',   skill:'Moving Specialist', area:'Mirpur',      color:'bg-green-600',  initials:'JU', status:'active' },
+  
+];
+
+const REVIEWS = {
+  customers: [
+    { name:'Adnan Chowdhury', role:'Gulshan Resident', text:"Proyojon didn't just fix my AC; they restored my faith in local services. Punctual and professional." },
+    { name:'Dr. Nusrat Jahan', role:'Medical Professional', text:"I've used them for deep cleaning twice. The attention to detail is unmatched in Dhaka." },
+    { name:'Ziaul Huq', role:'Entrepreneur', text:"The transparent pricing is a game changer. No more haggling with workers." },
+  ],
+  artisans: [
+    { name:'Master Kabir', role:'Senior Plumber', text:"I have been a plumber for 18 years. Proyojon is the only platform that treats my skill with dignity." },
+    { name:'Niloy Das', role:'Electrician', text:"The training sessions at Proyojon helped me learn modern safety standards I never knew before." },
+    { name:'Sumi Akter', role:'Cleaning Expert', text:"I can now support my family with a consistent income. Proyojon is my second home." },
+  ],
+};
+
+const TIMELINE = [
+  { year:'2022', title:'The Seed',         desc:'Started in a small garage in Dhanmondi with just 5 specialized artisans who believed every home deserves mastery.',     num:'01' },
+  { year:'2023', title:'The Digital Leap', desc:'Launched our first platform. We scaled from 5 to 200 artisans, providing consistent work and fair wages across the city.', num:'02' },
+  { year:'2024', title:'The Standard',     desc:'Established the Proyojon Academy — a mandatory certification for all our providers to ensure quality in every service.',   num:'03' },
+  { year:'2025', title:"Dhaka's Pulse",    desc:"Became the highest-rated service collective in the country. Helping 10,000+ homes monthly while maintaining 100% safety records.", num:'04' },
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────────────────
+
+let _state = {
+  currentPage: 'auth',
+  authMode: 'login',
+  authRole: 'customer',
+  catFilter: 'all',
+  searchQuery: '',
+  zone: 'All',
+  workerSkillFilter: 'All',
+  cartItems: [],
+};
+
+// ─── UTILITY ───────────────────────────────────────────────────────────────────
+
+function showToast(msg, type = 'default') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show';
+  t.style.background = type === 'error' ? '#dc2626' : '#0d0e11';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function generateId(prefix = 'ID') {
+  return `${prefix}-${Date.now().toString(36).toUpperCase()}`;
+}
+
+function formatDate(ts) {
+  return new Date(ts).toLocaleDateString('en-BD', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function initials(name) {
+  return name.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+}
+
+function randomColor() {
+  return COLORS[Math.floor(Math.random() * COLORS.length)];
+}
+
+// ─── REVEAL OBSERVER ───────────────────────────────────────────────────────────
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+
+function attachReveal() {
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el => observer.observe(el));
+}
+
+// ─── APP ───────────────────────────────────────────────────────────────────────
+
+const App = {
+  // Switch between app pages (not auth)
+  goPage(pageId) {
+    // Hide all app pages
+    document.querySelectorAll('#app-wrapper .page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+
+    const target = document.getElementById(`page-${pageId}`);
+    if (target) target.classList.add('active');
+
+    const nav = document.getElementById(`bnav-${pageId}`);
+    if (nav) nav.classList.add('active');
+
+    _state.currentPage = pageId;
+    // Persist the page so reload returns here
+    DB.setLastPage(pageId);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Page-specific setup
+    if (pageId === 'home')       { Services.render(); }
+    if (pageId === 'workers')    { Workers.render(); }
+    if (pageId === 'story')      { Story.render(); }
+    if (pageId === 'bookings')   { Bookings.render(); }
+    if (pageId === 'profile')    { Profile.load(); }
+    if (pageId === 'mod')        { Mod.load(); }
+    if (pageId === 'landing')    { Landing.render(); }
+
+    setTimeout(attachReveal, 100);
+  },
+
+  // Show the auth screen (hide app)
+  showAuth() {
+    document.getElementById('page-auth').style.display = 'flex';
+    document.getElementById('main-nav').style.display = 'none';
+    document.getElementById('app-wrapper').style.display = 'none';
+    _state.currentPage = 'auth';
+    setTimeout(attachReveal, 100);
+  },
+
+  // Show the app (hide auth)
+  showApp(session) {
+    document.getElementById('page-auth').style.display = 'none';
+    document.getElementById('main-nav').style.display = 'block';
+    document.getElementById('app-wrapper').style.display = 'block';
+    document.getElementById('logout-btn').style.display = 'flex';
+
+    if (session.role === 'moderator') {
+      document.getElementById('bnav-mod').classList.remove('hidden');
+    } else {
+      document.getElementById('bnav-mod').classList.add('hidden');
+    }
+  },
+
+  init() {
+    const session = DB.getSession();
+    if (session) {
+      // Already logged in — restore the last page
+      App.showApp(session);
+      const lastPage = DB.getLastPage();
+      // Guard: moderators can see mod page, customers cannot
+      if (lastPage === 'mod' && session.role !== 'moderator') {
+        App.goPage('landing');
+      } else {
+        App.goPage(lastPage);
+      }
+    } else {
+      App.showAuth();
+    }
+  },
+};
+
+// ─── AUTH ──────────────────────────────────────────────────────────────────────
+
+const Auth = {
+  setRole(role) {
+    _state.authRole = role;
+    document.getElementById('role-customer').classList.toggle('active', role === 'customer');
+    document.getElementById('role-moderator').classList.toggle('active', role === 'moderator');
+  },
+
+  toggleMode() {
+    _state.authMode = _state.authMode === 'login' ? 'signup' : 'login';
+    const isLogin = _state.authMode === 'login';
+    document.getElementById('field-name').classList.toggle('hidden', isLogin);
+    document.getElementById('field-confirm').classList.toggle('hidden', isLogin);
+    document.getElementById('auth-title').textContent = isLogin ? 'Welcome Back' : 'Create Account';
+    document.getElementById('auth-subtitle').textContent = isLogin ? "Login to access Dhaka's finest services." : "Join thousands of happy customers.";
+    document.getElementById('auth-btn').textContent = isLogin ? 'Enter Proyojon' : 'Create Account';
+    document.getElementById('toggle-mode-btn').textContent = isLogin ? 'Create an account' : 'Already have an account?';
+    document.getElementById('auth-error').classList.add('hidden');
+  },
+
+  handleSubmit(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('auth-error');
+    errEl.classList.add('hidden');
+
+    const email    = document.getElementById('auth-email').value.trim().toLowerCase();
+    const password = document.getElementById('auth-password').value;
+
+    if (_state.authMode === 'signup') {
+      const name    = document.getElementById('auth-name').value.trim();
+      const confirm = document.getElementById('auth-confirm').value;
+
+      if (!name) { Auth.showError('Name is required'); return; }
+      if (password.length < 6) { Auth.showError('Password must be at least 6 characters'); return; }
+      if (password !== confirm) { Auth.showError('Passwords do not match'); return; }
+      if (DB.findUser(email)) { Auth.showError('This email is already registered'); return; }
+
+      const user = {
+        id:       generateId('USR'),
+        name,
+        email,
+        password,
+        role:     _state.authRole,
+        phone:    '',
+        zone:     'Gulshan',
+        joinedAt: Date.now(),
+      };
+      DB.addUser(user);
+      DB.setSession(user);
+      showToast(`Welcome to Proyojon, ${name}!`);
+      setTimeout(() => {
+        App.showApp(user);
+        App.goPage('landing');
+      }, 600);
+
+    } else {
+      const user = DB.findUser(email);
+      if (!user) { Auth.showError('No account found with this email'); return; }
+      if (user.password !== password) { Auth.showError('Incorrect password'); return; }
+      if (user.role !== _state.authRole) { Auth.showError(`This account is registered as ${user.role}`); return; }
+
+      DB.setSession(user);
+      showToast(`Welcome back, ${user.name}!`);
+      setTimeout(() => {
+        App.showApp(user);
+        App.goPage('landing');
+      }, 600);
+    }
+  },
+
+  showError(msg) {
+    const errEl = document.getElementById('auth-error');
+    errEl.textContent = msg;
+    errEl.classList.remove('hidden');
+  },
+
+  logout() {
+    DB.clearSession();
+    DB.setLastPage('landing');
+    _state.cartItems = [];
+    Cart.updateUI();
+
+    // Reset profile UI
+    document.getElementById('profile-name').textContent = 'Guest User';
+    document.getElementById('profile-initial').textContent = '?';
+    document.getElementById('profile-role-display').textContent = 'Member';
+
+    showToast('Logged out successfully');
+    setTimeout(() => {
+      // Hide all app pages
+      document.querySelectorAll('#app-wrapper .page').forEach(p => p.classList.remove('active'));
+      App.showAuth();
+    }, 600);
+  },
+};
+
+// ─── BOOKING CONFIRMED ─────────────────────────────────────────────────────────
+
+const BookingConfirmed = {
+  show(bookingId) {
+    document.getElementById('confirm-booking-id').textContent = `Booking ID: ${bookingId}`;
+    document.getElementById('booking-confirmed-overlay').classList.add('open');
+  },
+
+  hide() {
+    document.getElementById('booking-confirmed-overlay').classList.remove('open');
+  },
+
+  viewOrders() {
+    this.hide();
+    App.goPage('bookings');
+  },
+
+  bookMore() {
+    this.hide();
+    App.goPage('home');
+  },
+};
+
+// ─── CART ──────────────────────────────────────────────────────────────────────
+
+const Cart = {
+  toggle() {
+    const panel = document.getElementById('cart-panel');
+    panel.classList.toggle('open');
+  },
+
+  handleOverlayClick(e) {
+    if (e.target === document.getElementById('cart-panel')) this.toggle();
+  },
+
+  add(id) {
+    const svc = SERVICES.find(s => s.id === id);
+    if (!svc) return;
+    _state.cartItems.push({ ...svc });
+    this.updateUI();
+    showToast(`${svc.name} added to cart`);
+  },
+
+  remove(idx) {
+    _state.cartItems.splice(idx, 1);
+    this.updateUI();
+  },
+
+  updateUI() {
+    const items  = _state.cartItems;
+    const badge  = document.getElementById('cart-badge');
+    const total  = items.reduce((s, i) => s + i.price, 0);
+
+    badge.textContent = items.length;
+    badge.style.display = items.length ? 'flex' : 'none';
+
+    document.getElementById('cart-total').textContent = `৳${total.toLocaleString()}`;
+
+    document.getElementById('cart-items').innerHTML = items.length
+      ? items.map((item, idx) => `
+          <div class="flex justify-between items-center py-3 border-b border-gray-100">
+            <div>
+              <p class="font-medium text-sm">${item.icon} ${item.name}</p>
+              <p class="text-xs text-gray-400 mt-0.5">৳${item.price.toLocaleString()}</p>
+            </div>
+            <button onclick="Cart.remove(${idx})" class="text-red-400 hover:text-red-600 font-bold text-lg leading-none transition">✕</button>
+          </div>
+        `).join('')
+      : '<p class="text-gray-400 text-sm text-center py-10 font-syne uppercase tracking-widest">Your cart is empty</p>';
+  },
+
+  checkout() {
+    if (!_state.cartItems.length) { showToast('Your cart is empty', 'error'); return; }
+    const session = DB.getSession();
+    if (!session) { showToast('Please login first', 'error'); return; }
+
+    if (!confirm('Are you sure you want to confirm this order?')) return;
+
+    const booking = {
+      id:         generateId('BK'),
+      userId:     session.id,
+      userName:   session.name,
+      items:      [..._state.cartItems],
+      total:      _state.cartItems.reduce((s, i) => s + i.price, 0),
+      status:     'pending',
+      createdAt:  Date.now(),
+    };
+
+    DB.addBooking(booking);
+
+    _state.cartItems = [];
+    this.updateUI();
+    this.toggle(); // Close the cart drawer first
+
+    Profile.refreshStats();
+
+    // Show the booking confirmed overlay (not a page navigation)
+    setTimeout(() => BookingConfirmed.show(booking.id), 200);
+  },
+};
+
+// ─── SERVICES ──────────────────────────────────────────────────────────────────
+
+const Services = {
+  render() {
+    this.renderCategories();
+    this.renderList();
+  },
+
+  renderCategories() {
+    document.getElementById('cat-grid').innerHTML = CATEGORIES.map(c => `
+      <div class="cat-card ${_state.catFilter === c.id ? 'active' : ''}" onclick="Services.setCat('${c.id}')">
+        <span class="text-2xl">${c.icon}</span>
+        <span class="text-xs font-bold uppercase tracking-wider">${c.name}</span>
+      </div>
+    `).join('');
+  },
+
+  renderList() {
+    const q = _state.searchQuery.toLowerCase();
+    const filtered = SERVICES.filter(s =>
+      (_state.catFilter === 'all' || s.cat === _state.catFilter) &&
+      (!q || s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q))
+    );
+
+    const listEl = document.getElementById('svc-list');
+    const noEl   = document.getElementById('no-results');
+
+    if (!filtered.length) {
+      listEl.innerHTML = '';
+      noEl.classList.remove('hidden');
+      return;
+    }
+    noEl.classList.add('hidden');
+
+    listEl.innerHTML = filtered.map(s => `
+      <div class="svc-card reveal">
+        <div class="flex justify-between mb-4">
+          <span class="text-4xl">${s.icon}</span>
+          <span class="text-orange-600 font-bold text-sm">★ ${s.rating}</span>
+        </div>
+        <h4 class="font-syne font-bold text-base uppercase mb-1">${s.name}</h4>
+        <p class="text-gray-400 text-xs mb-5 leading-relaxed">${s.desc}</p>
+        <div class="flex justify-between items-center">
+          <span class="font-syne text-2xl font-bold">৳${s.price.toLocaleString()}</span>
+          <button class="add-btn" onclick="Cart.add(${s.id})">Add</button>
+        </div>
+      </div>
+    `).join('');
+
+    setTimeout(attachReveal, 80);
+  },
+
+  setCat(id) {
+    _state.catFilter = id;
+    _state.searchQuery = '';
+    document.getElementById('search-input').value = '';
+    this.renderCategories();
+    this.renderList();
+  },
+
+  search(q) {
+    _state.searchQuery = q;
+    this.renderList();
+  },
+
+  setZone(el, zone) {
+    _state.zone = zone;
+    document.querySelectorAll('.zone-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  },
+};
+
+// ─── LANDING ───────────────────────────────────────────────────────────────────
+
+const Landing = {
+  render() {
+    const featured = SERVICES.slice(0, 6);
+    document.getElementById('featured-services').innerHTML = featured.map(s => `
+      <div class="svc-card reveal">
+        <div class="flex justify-between mb-4">
+          <span class="text-4xl">${s.icon}</span>
+          <span class="text-orange-600 font-bold text-sm">★ ${s.rating}</span>
+        </div>
+        <h4 class="font-syne font-bold text-base uppercase mb-1">${s.name}</h4>
+        <p class="text-gray-400 text-xs mb-5 leading-relaxed">${s.desc}</p>
+        <div class="flex justify-between items-center">
+          <span class="font-syne text-2xl font-bold">৳${s.price.toLocaleString()}</span>
+          <button class="add-btn" onclick="Cart.add(${s.id})">Add</button>
+        </div>
+      </div>
+    `).join('');
+    setTimeout(attachReveal, 80);
+  },
+};
+
+// ─── WORKERS ───────────────────────────────────────────────────────────────────
+
+const Workers = {
+  render() {
+    const workers = DB.getWorkers();
+    const skills  = ['All', ...new Set(workers.map(w => w.skill))];
+
+    document.getElementById('skill-filter').innerHTML = skills.map(s => `
+      <button class="zone-pill ${_state.workerSkillFilter === s ? 'active' : ''}" onclick="Workers.filter(this,'${s}')">${s}</button>
+    `).join('');
+
+    this.renderList(workers);
+  },
+
+  renderList(workers) {
+    const filtered = workers.filter(w =>
+      _state.workerSkillFilter === 'All' || w.skill === _state.workerSkillFilter
+    );
+
+    document.getElementById('all-workers-list').innerHTML = filtered.map((w, i) => `
+      <div class="worker-card reveal" style="animation-delay:${i * 0.07}s">
+        <div class="worker-avatar ${w.color}">${w.initials}</div>
+        <div>
+          <h4 class="font-syne font-bold text-lg">${w.name}</h4>
+          <p class="text-orange-600 text-xs font-bold uppercase tracking-widest mt-1">${w.skill}</p>
+          <p class="text-gray-400 text-xs mt-2">📍 ${w.area}</p>
+        </div>
+        <span class="status-badge ${w.status === 'active' ? 'badge-active' : 'badge-pending'}">${w.status}</span>
+      </div>
+    `).join('');
+
+    setTimeout(attachReveal, 80);
+  },
+
+  filter(el, skill) {
+    _state.workerSkillFilter = skill;
+    document.querySelectorAll('#skill-filter .zone-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    this.renderList(DB.getWorkers());
+  },
+};
+
+// ─── STORY ─────────────────────────────────────────────────────────────────────
+
+const Story = {
+  render() {
+    document.getElementById('timeline-items').innerHTML = TIMELINE.map((t, i) => `
+      <div class="relative flex gap-8 mb-16 reveal">
+        <div class="flex flex-col items-center">
+          <div class="timeline-dot">${t.num}</div>
+          ${i < TIMELINE.length - 1 ? '<div class="flex-1 w-0.5 bg-gray-200 mt-2"></div>' : ''}
+        </div>
+        <div class="pb-4">
+          <h3 class="font-syne text-3xl font-bold text-orange-600">${t.year}</h3>
+          <h4 class="font-syne text-xl font-bold uppercase mt-1">${t.title}</h4>
+          <p class="text-gray-500 mt-3 leading-relaxed">${t.desc}</p>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('customer-reviews').innerHTML = REVIEWS.customers.map(r => `
+      <div class="review-card reveal">
+        <p class="font-corm italic text-xl mb-4">"${r.text}"</p>
+        <div>
+          <p class="font-syne font-bold text-xs uppercase tracking-widest">— ${r.name}</p>
+          <p class="text-gray-400 text-xs mt-1">${r.role}</p>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('provider-reviews').innerHTML = REVIEWS.artisans.map(r => `
+      <div class="review-card dark reveal">
+        <p class="font-corm italic text-xl mb-4">"${r.text}"</p>
+        <div>
+          <p class="font-syne font-bold text-xs uppercase tracking-widest text-orange-400">— ${r.name}</p>
+          <p class="text-gray-500 text-xs mt-1">${r.role}</p>
+        </div>
+      </div>
+    `).join('');
+
+    setTimeout(attachReveal, 80);
+  },
+};
+
+// ─── BOOKINGS ──────────────────────────────────────────────────────────────────
+
+const Bookings = {
+  _filter: 'all',
+
+  render() {
+    const session  = DB.getSession();
+    if (!session) return;
+
+    const all = DB.getBookings().filter(b => b.userId === session.id).reverse();
+    this.renderList(all);
+  },
+
+  renderList(bookings) {
+    const filtered = this._filter === 'all' ? bookings : bookings.filter(b => b.status === this._filter);
+    const el = document.getElementById('bookings-list');
+
+    ['all','pending','done'].forEach(f => {
+      document.getElementById(`btab-${f}`)?.classList.toggle('active', this._filter === f);
+    });
+
+    if (!filtered.length) {
+      el.innerHTML = `<div class="text-center py-20 bg-white rounded-3xl border">
+        <p class="font-syne uppercase tracking-widest text-gray-400 text-sm">No bookings found</p>
+      </div>`;
+      return;
+    }
+
+    el.innerHTML = filtered.map(b => `
+      <div class="booking-row">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <p class="font-syne font-bold uppercase tracking-wider text-sm">${b.id}</p>
+            <p class="text-xs text-gray-400 mt-1">${formatDate(b.createdAt)}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-orange-600">৳${b.total.toLocaleString()}</span>
+            <span class="status-badge ${b.status === 'done' ? 'badge-done' : 'badge-pending'}">${b.status}</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          ${b.items.map(i => `<span class="text-xs bg-gray-100 px-3 py-1 rounded-full">${i.icon} ${i.name}</span>`).join('')}
+        </div>
+        ${b.status === 'pending' ? `<button onclick="Bookings.cancel('${b.id}')" class="mt-3 text-xs text-red-400 hover:text-red-600 font-bold uppercase tracking-widest transition">Cancel Order</button>` : ''}
+      </div>
+    `).join('');
+  },
+
+  filter(f) {
+    this._filter = f;
+    this.render();
+  },
+
+  cancel(id) {
+    const bookings = DB.getBookings();
+    const idx = bookings.findIndex(b => b.id === id);
+    if (idx !== -1) {
+      bookings[idx].status = 'cancelled';
+      DB.saveBookings(bookings);
+      showToast('Booking cancelled');
+      this.render();
+      Profile.refreshStats();
+    }
+  },
+};
+
+// ─── PROFILE ───────────────────────────────────────────────────────────────────
+
+const Profile = {
+  load() {
+    const user = DB.getSession();
+    if (!user) return;
+
+    document.getElementById('profile-name').textContent          = user.name;
+    document.getElementById('profile-initial').textContent       = initials(user.name);
+    document.getElementById('profile-role-display').textContent  = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+    document.getElementById('profile-email-display').textContent = user.email;
+
+    document.getElementById('profile-edit-name').value  = user.name;
+    document.getElementById('profile-edit-phone').value = user.phone || '';
+    document.getElementById('profile-edit-zone').value  = user.zone  || 'Gulshan';
+
+    this.refreshStats();
+  },
+
+  refreshStats() {
+    const user     = DB.getSession();
+    if (!user) return;
+    const bookings = DB.getBookings().filter(b => b.userId === user.id && b.status !== 'cancelled');
+    const spent    = bookings.reduce((s, b) => s + b.total, 0);
+
+    document.getElementById('stat-bookings').textContent = bookings.length;
+    document.getElementById('stat-spent').textContent    = `৳${spent.toLocaleString()}`;
+  },
+
+  save(e) {
+    e.preventDefault();
+    const user  = DB.getSession();
+    if (!user) return;
+
+    const name  = document.getElementById('profile-edit-name').value.trim();
+    const phone = document.getElementById('profile-edit-phone').value.trim();
+    const zone  = document.getElementById('profile-edit-zone').value;
+
+    const users = DB.getUsers();
+    const idx   = users.findIndex(u => u.id === user.id);
+    if (idx !== -1) {
+      users[idx] = { ...users[idx], name, phone, zone };
+      DB.saveUsers(users);
+      DB.setSession(users[idx]);
+    }
+
+    document.getElementById('profile-name').textContent   = name;
+    document.getElementById('profile-initial').textContent = initials(name);
+
+    showToast('Profile updated successfully');
+  },
+};
+
+// ─── MODERATOR ─────────────────────────────────────────────────────────────────
+
+const Mod = {
+  load() {
+    const now = new Date();
+    document.getElementById('mod-date').textContent = now.toLocaleDateString('en-BD', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+
+    const bookings = DB.getBookings();
+    const users    = DB.getUsers();
+    const workers  = DB.getWorkers();
+    const revenue  = bookings.filter(b => b.status !== 'cancelled').reduce((s, b) => s + b.total, 0);
+
+    document.getElementById('mod-stat-bookings').textContent = bookings.length;
+    document.getElementById('mod-stat-revenue').textContent  = `৳${revenue.toLocaleString()}`;
+    document.getElementById('mod-stat-users').textContent    = users.length;
+    document.getElementById('mod-stat-workers').textContent  = workers.filter(w => w.status === 'active').length;
+
+    this.renderBookings(bookings);
+    this.renderWorkers(workers);
+  },
+
+  renderBookings(bookings) {
+    const tbody = document.getElementById('mod-bookings-tbody');
+    if (!bookings.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-gray-400 py-10 text-sm">No bookings yet</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = [...bookings].reverse().map(b => `
+      <tr>
+        <td class="font-mono text-xs">${b.id}</td>
+        <td>${b.userName}</td>
+        <td class="text-xs text-gray-500">${b.items.map(i => i.name).join(', ')}</td>
+        <td class="font-bold">৳${b.total.toLocaleString()}</td>
+        <td class="text-xs text-gray-400">${formatDate(b.createdAt)}</td>
+        <td><span class="status-badge ${b.status === 'done' ? 'badge-done' : b.status === 'cancelled' ? 'badge-pending' : 'badge-active'}">${b.status}</span></td>
+        <td>
+          ${b.status === 'pending' ? `<button onclick="Mod.markDone('${b.id}')" class="text-xs font-bold text-green-600 hover:underline">Mark Done</button>` : '—'}
+        </td>
+      </tr>
+    `).join('');
+  },
+
+  renderWorkers(workers) {
+    const tbody = document.getElementById('mod-workers-tbody');
+    tbody.innerHTML = workers.map(w => `
+      <tr>
+        <td>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 ${w.color} rounded-full flex items-center justify-center text-white text-xs font-bold">${w.initials}</div>
+            <span class="font-medium">${w.name}</span>
+          </div>
+        </td>
+        <td>${w.skill}</td>
+        <td class="text-gray-500">${w.area}</td>
+        <td><span class="status-badge ${w.status === 'active' ? 'badge-active' : 'badge-pending'}">${w.status}</span></td>
+        <td>
+          <button onclick="Mod.toggleWorkerStatus('${w.id}')" class="text-xs font-bold text-gray-500 hover:text-orange-600 transition">${w.status === 'active' ? 'Deactivate' : 'Activate'}</button>
+          <button onclick="Mod.removeWorker('${w.id}')" class="ml-3 text-xs font-bold text-red-400 hover:text-red-600 transition">Remove</button>
+        </td>
+      </tr>
+    `).join('');
+  },
+
+  markDone(id) {
+    const bookings = DB.getBookings();
+    const idx = bookings.findIndex(b => b.id === id);
+    if (idx !== -1) { bookings[idx].status = 'done'; DB.saveBookings(bookings); }
+    this.load();
+    showToast('Booking marked as done');
+  },
+
+  toggleWorkerStatus(id) {
+    const workers = DB.getWorkers();
+    const idx = workers.findIndex(w => w.id === id);
+    if (idx !== -1) {
+      workers[idx].status = workers[idx].status === 'active' ? 'inactive' : 'active';
+      DB.saveWorkers(workers);
+    }
+    this.load();
+  },
+
+  removeWorker(id) {
+    if (!confirm('Remove this worker?')) return;
+    DB.removeWorker(id);
+    this.load();
+    showToast('Worker removed');
+  },
+
+  openAddWorker() {
+    document.getElementById('worker-modal').classList.remove('hidden');
+  },
+
+  closeWorkerModal() {
+    document.getElementById('worker-modal').classList.add('hidden');
+    document.getElementById('wm-name').value = '';
+    document.getElementById('wm-skill').value = '';
+  },
+
+  submitWorker(e) {
+    e.preventDefault();
+    const name  = document.getElementById('wm-name').value.trim();
+    const skill = document.getElementById('wm-skill').value.trim();
+    const area  = document.getElementById('wm-area').value;
+
+    const worker = {
+      id:       generateId('W'),
+      name, skill, area,
+      initials: initials(name),
+      color:    randomColor(),
+      status:   'active',
+    };
+    DB.addWorker(worker);
+    this.closeWorkerModal();
+    this.load();
+    showToast(`${name} added as worker`);
+  },
+
+  exportCSV() {
+    const bookings = DB.getBookings();
+    if (!bookings.length) { showToast('No data to export', 'error'); return; }
+
+    const rows = [
+      ['Booking ID','Customer','Services','Total','Status','Date'],
+      ...bookings.map(b => [b.id, b.userName, b.items.map(i => i.name).join(' | '), b.total, b.status, formatDate(b.createdAt)]),
+    ];
+
+    const csv  = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `proyojon_bookings_${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV exported');
+  },
+};
+
+// ─── INIT ──────────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+  App.init();
+});
+</script>
+</body>
+</html>
