@@ -1228,7 +1228,7 @@ const AIChat = {
   onProviderChange(provider) {
     const modelInput = document.getElementById('ai-model');
     if (provider === 'gemini') {
-      modelInput.value = 'gemini-1.5-flash';
+      modelInput.value = 'gemini-3.5-flash';
     } else if (provider === 'groq') {
       modelInput.value = 'llama-3.1-8b-instant';
     } else if (provider === 'openai') {
@@ -1250,7 +1250,7 @@ const AIChat = {
   },
 
   loadSettings() {
-    const settings = DB.get('ai_settings') || { provider: 'gemini', model: 'gemini-1.5-flash', key: '' };
+    const settings = DB.get('ai_settings') || { provider: 'gemini', model: 'gemini-3.5-flash', key: '' };
     document.getElementById('ai-provider').value = settings.provider;
     document.getElementById('ai-model').value = settings.model;
     document.getElementById('ai-key').value = settings.key;
