@@ -18,7 +18,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/proyojon';
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname))); // Serve frontend files directly
+app.use(express.static(path.join(__dirname)));// Serve frontend files directly
 
 // ─── DATABASE CONNECTION & SEEDING ─────────────────────────────────────────────
 
